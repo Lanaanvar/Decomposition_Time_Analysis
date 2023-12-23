@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "day1": "html",
+        "sstream": "cpp",
+        "iostream": "cpp",
+        "iomanip": "cpp",
+        "cstdlib": "cpp",
+        "vector": "cpp",
+        "utility": "cpp"
+    }
+}
