@@ -1,4 +1,5 @@
 #include "comp.h"
+#include "SPD.h"
 using namespace std;
 
 pair<long long, tuple<Matrix, Matrix>> MatrixComparator::measureTime(const Matrix &mat, function<tuple<Matrix, Matrix>(const Matrix &)> decompositionFunc)
