@@ -6,6 +6,7 @@
         "iomanip": "cpp",
         "cstdlib": "cpp",
         "vector": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "functional": "cpp"
     }
 }

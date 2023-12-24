@@ -1,21 +1,21 @@
-#include<iostream>
-#include<vector>
+#include <iostream>
+#include <vector>
 using namespace std;
 
-class Matrix{
-    private:
+class Matrix
+{
+private:
     vector<vector<double>> data;
 
-    public:
+public:
     Matrix(int rows, int cols);
     void generateSPDMatrix();
-    void savetoCSV(const string& filename);
-    void loadfromCSV(const string& filename);
-    void display()const;
+    void savetoCSV(const string &filename);
+    void loadfromCSV(const string &filename);
+    void display() const;
     // vector<vector<double>>getData();
 
-    Matrix choleskyDecomposition() const;
+    pair<Matrix, Matrix> choleskyDecomposition() const;
     pair<Matrix, Matrix> luDecomposition() const;
     pair<Matrix, Matrix> qrDecomposition() const;
-    
 };

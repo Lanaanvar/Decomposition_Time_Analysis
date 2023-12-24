@@ -11,35 +11,6 @@ using namespace std;
 
 Matrix::Matrix(int rows, int cols) : data(rows, vector<double>(cols, 0.0)) {}
 
-// vector<vector<double>> Matrix::getData()
-// {
-//     return data;
-// }
-
-// void generateSPDMatrix(Matrix &matrix) {
-//     int n;
-//     std::cout << "Enter the size of the matrix: ";
-//     std::cin >> n;
-
-//     matrix.getData() = std::vector<std::vector<double>>(n, std::vector<double>(n, 0.0));
-
-//     for (int i = 0; i < n; ++i) {
-//         for (int j = i; j < n; ++j) {
-//             matrix.getData() = matrix.getData() = static_cast<double>(rand()) / RAND_MAX;
-//         }
-//     }
-
-//     for (int i = 0; i < n; ++i) {
-//         for (int j = 0; j < i; ++j) {
-//             matrix.getData() = matrix.getData();
-//         }
-//     }
-
-//     for (int i = 0; i < n; ++i) {
-//         matrix.data[i][i] += 1.0;
-//     }
-// }
-
 void Matrix::generateSPDMatrix()
 {
     int n;
@@ -114,7 +85,7 @@ void Matrix::display() const
     }
 }
 
-Matrix Matrix::choleskyDecomposition() const
+pair<Matrix, Matrix> Matrix::choleskyDecomposition() const
 {
     Matrix L(data.size(), data.size());
     for (int i = 0; i < data.size(); i++)
@@ -141,39 +112,48 @@ Matrix Matrix::choleskyDecomposition() const
             }
         }
     }
-    return L;
+    Matrix I(data.size(), data.size());
+    for (int i = 0; i < data.size(); i++)
+    {
+        I.data[i][i] = 1.0;
+    }
+
+    // return the decomposed matrix and the identity matrix
+    return make_pair(L, I);
 }
 
 pair<Matrix, Matrix> Matrix::luDecomposition() const
 {
     Matrix L(data.size(), data.size()), U(data.size(), data.size());
-    for (int i=0; i<data.size(); i++)
+    for (int i = 0; i < data.size(); i++)
     {
-        for(int j=0; j<data.size(); j++)
+        for (int j = 0; j < data.size(); j++)
         {
-            if(i>j)
+            if (i > j)
             {
-                L.data[i][j]=data[i][j];
-                U.data[i][j]=0.0;
+                L.data[i][j] = data[i][j];
+                U.data[i][j] = 0.0;
             }
-            else if(i==j){
-                L.data[i][j]=1.0;
-                U.data[i][j]=data[i][j];
+            else if (i == j)
+            {
+                L.data[i][j] = 1.0;
+                U.data[i][j] = data[i][j];
             }
-            else{
-                L.data[i][j]=0.0;
-                U.data[i][j]=data[i][j];
+            else
+            {
+                L.data[i][j] = 0.0;
+                U.data[i][j] = data[i][j];
             }
         }
     }
-    for(int k=0; k<data.size(); k++)
+    for (int k = 0; k < data.size(); k++)
     {
-        for(int i=k+1; ++i<data.size(); ++i)
+        for (int i = k + 1; ++i < data.size(); ++i)
         {
-            L.data[i][k]=U.data[i][k]/U.data[i][k];
-            for(int j=k; j<data.size(); ++j)
+            L.data[i][k] = U.data[i][k] / U.data[i][k];
+            for (int j = k; j < data.size(); ++j)
             {
-                U.data[i][j] -=L.data[i][k]*U.data[k][j];
+                U.data[i][j] -= L.data[i][k] * U.data[k][j];
             }
         }
     }
@@ -183,35 +163,35 @@ pair<Matrix, Matrix> Matrix::luDecomposition() const
 pair<Matrix, Matrix> Matrix::qrDecomposition() const
 {
     Matrix Q(data.size(), data.size()), R(data.size(), data.size());
-    for(int k=0; k<data.size(); k++)
+    for (int k = 0; k < data.size(); k++)
     {
-        double norm=0.0;
-        for(int i=0; i<data.size(); i++)
+        double norm = 0.0;
+        for (int i = 0; i < data.size(); i++)
         {
-            norm +=data[i][k]*data[i][k];
+            norm += data[i][k] * data[i][k];
         }
         norm = sqrt(norm);
 
-        for(int i=0; i<data.size(); i++)
+        for (int i = 0; i < data.size(); i++)
         {
-            Q.data[i][k]= data[i][k]/norm;
+            Q.data[i][k] = data[i][k] / norm;
         }
 
-        for(int j=k; j<data.size(); j++)
+        for (int j = k; j < data.size(); j++)
         {
-            double sum =0.0;
-            for(int i=0; i<data.size(); i++)
+            double sum = 0.0;
+            for (int i = 0; i < data.size(); i++)
             {
-                sum+= Q.data[i][k]*data[i][j];
+                sum += Q.data[i][k] * data[i][j];
             }
-            R.data[k][j]=sum;
+            R.data[k][j] = sum;
         }
 
-        for(int i=0; i<data.size(); i++)
+        for (int i = 0; i < data.size(); i++)
         {
-            for(int j=k+1; j<data.size(); j++)
+            for (int j = k + 1; j < data.size(); j++)
             {
-                Q.data[i][j] -=R.data[k][j]*Q.data[i][k];
+                Q.data[i][j] -= R.data[k][j] * Q.data[i][k];
             }
         }
     }
