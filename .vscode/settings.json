@@ -8,6 +8,16 @@
         "vector": "cpp",
         "utility": "cpp",
         "functional": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "adolcforward": "cpp",
+        "alignedvector3": "cpp",
+        "fft": "cpp",
+        "mprealsupport": "cpp",
+        "matrixfunctions": "cpp",
+        "openglsupport": "cpp",
+        "array": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "xstring": "cpp"
     }
 }
