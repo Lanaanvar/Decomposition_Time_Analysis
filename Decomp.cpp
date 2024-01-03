@@ -41,28 +41,25 @@ public:
     }
     MatrixDecomposer(int size) : size(size)
     {
-        // Initialize the random symmetric positive definite matrix
-        generateSymmetricPositiveDefiniteMatrix();
+        generateSPDMatrix();
     }
 
-    void generateSymmetricPositiveDefiniteMatrix()
+    void generateSPDMatrix()
     {
-        // Generate a random symmetric positive definite matrix
         MatrixXd A = MatrixXd::Random(size, size);
         symmetricMatrix = A * A.transpose();
     }
 
     void displayMatrix(const MatrixXd &matrix, const string &title) const
     {
-        cout << title << ":\n"
+        cout << "\n"<< title << ":\n"
              << matrix << "\n\n";
     }
 
     void decomposeAndMeasureTime()
     {
-        const int numIterations = 10000; // Adjust the number of iterations as needed
+        const int numIterations = 90000;
 
-        // QR decomposition
         auto start = high_resolution_clock::now();
         for (int i = 0; i < numIterations; ++i)
         {
@@ -70,11 +67,12 @@ public:
         }
         auto stop = high_resolution_clock::now();
         auto qr_duration = duration_cast<microseconds>(stop - start) / numIterations;
+        cout << "x----------------------------------------------------------------------------------x"
+             << "\n";
         displayMatrix(Q, "QR Decomposition (Q matrix)");
         displayMatrix(R, "QR Decomposition (R matrix)");
         cout << "Average QR Decomposition Time: " << qr_duration.count() << " microseconds\n\n";
 
-        // LU decomposition
         start = high_resolution_clock::now();
         for (int i = 0; i < numIterations; ++i)
         {
@@ -82,11 +80,12 @@ public:
         }
         stop = high_resolution_clock::now();
         auto lu_duration = duration_cast<microseconds>(stop - start) / numIterations;
+        cout << "x----------------------------------------------------------------------------------x"
+             << "\n";
         displayMatrix(L, "LU Decomposition (L matrix)");
         displayMatrix(U, "LU Decomposition (U matrix)");
         cout << "Average LU Decomposition Time: " << lu_duration.count() << " microseconds\n\n";
 
-        // Cholesky decomposition
         start = high_resolution_clock::now();
         for (int i = 0; i < numIterations; ++i)
         {
@@ -94,26 +93,37 @@ public:
         }
         stop = high_resolution_clock::now();
         auto cholesky_duration = duration_cast<microseconds>(stop - start) / numIterations;
+        cout << "x----------------------------------------------------------------------------------x"
+             << "\n";
         displayMatrix(L_cholesky, "Cholesky Decomposition (L matrix)");
         cout << "Average Cholesky Decomposition Time: " << cholesky_duration.count() << " microseconds\n\n";
 
-        // Calculate the ratios
-        double qr_ratio = static_cast<double>(qr_duration.count()) / lu_duration.count();
-        double cholesky_ratio = static_cast<double>(cholesky_duration.count()) / lu_duration.count();
+        double qr_cholesky_ratio = static_cast<double>(qr_duration.count()) / cholesky_duration.count();
+        double lu_cholesky_ratio = static_cast<double>(lu_duration.count()) / cholesky_duration.count();
+        double cholesky_cholesky_ratio = static_cast<double>(cholesky_duration.count()) / cholesky_duration.count();
 
-        cout << "QR Decomposition Time / LU Decomposition Time Ratio: " << qr_ratio << endl;
-        cout << "Cholesky Decomposition Time / LU Decomposition Time Ratio: " << cholesky_ratio << endl;
+        cout << "x----------------------------------------------------------------------------------x"
+             << "\n";
+
+        // cout << "QR Decomposition Time / Cholesky Decomposition Time Ratio: " << qr_cholesky_ratio << endl;
+        // cout << "LU Decomposition Time / Cholesky Decomposition Time Ratio: " << lu_cholesky_ratio << endl;
+        // cout << "Cholesky Decomposition Time / Cholesky Decomposition Time Ratio: " << cholesky_cholesky_ratio << endl;
+        cout << "QR : LU : Cholesky -> " << qr_cholesky_ratio << " : " << lu_cholesky_ratio << " : " << cholesky_cholesky_ratio << endl;
     }
 };
 
 int main()
 {
-    int matrixSize = 4; // Set the size of the matrix
+    int matrixSize;
+    cout << "\nEnter the size of the matrix : ";
+    cin >> matrixSize;
 
     MatrixDecomposer decomposer(matrixSize);
-    decomposer.displayMatrix(decomposer.getSymmetricMatrix(), "Generated Symmetric Positive Definite Matrix");
+    decomposer.displayMatrix(decomposer.getSymmetricMatrix(), "SPD Matrix");
 
     decomposer.decomposeAndMeasureTime();
+
+    cout<<"\n\n";
 
     return 0;
 }
