@@ -46,19 +46,20 @@ public:
 
     void generateSPDMatrix()
     {
-        MatrixXd A = MatrixXd::Random(size, size);
-        symmetricMatrix = A * A.transpose();
+        MatrixXd L = MatrixXd::Random(size, size).array().abs();
+        symmetricMatrix = L * L.transpose();
     }
 
     void displayMatrix(const MatrixXd &matrix, const string &title) const
     {
-        cout << "\n"<< title << ":\n"
+        cout << "\n"
+             << title << ":\n"
              << matrix << "\n\n";
     }
 
     void decomposeAndMeasureTime()
     {
-        const int numIterations = 90000;
+        const int numIterations = 10;
 
         auto start = high_resolution_clock::now();
         for (int i = 0; i < numIterations; ++i)
@@ -69,8 +70,6 @@ public:
         auto qr_duration = duration_cast<microseconds>(stop - start) / numIterations;
         cout << "x----------------------------------------------------------------------------------x"
              << "\n";
-        displayMatrix(Q, "QR Decomposition (Q matrix)");
-        displayMatrix(R, "QR Decomposition (R matrix)");
         cout << "Average QR Decomposition Time: " << qr_duration.count() << " microseconds\n\n";
 
         start = high_resolution_clock::now();
@@ -82,8 +81,6 @@ public:
         auto lu_duration = duration_cast<microseconds>(stop - start) / numIterations;
         cout << "x----------------------------------------------------------------------------------x"
              << "\n";
-        displayMatrix(L, "LU Decomposition (L matrix)");
-        displayMatrix(U, "LU Decomposition (U matrix)");
         cout << "Average LU Decomposition Time: " << lu_duration.count() << " microseconds\n\n";
 
         start = high_resolution_clock::now();
@@ -95,19 +92,15 @@ public:
         auto cholesky_duration = duration_cast<microseconds>(stop - start) / numIterations;
         cout << "x----------------------------------------------------------------------------------x"
              << "\n";
-        displayMatrix(L_cholesky, "Cholesky Decomposition (L matrix)");
         cout << "Average Cholesky Decomposition Time: " << cholesky_duration.count() << " microseconds\n\n";
 
-        double qr_cholesky_ratio = static_cast<double>(qr_duration.count()) / cholesky_duration.count();
-        double lu_cholesky_ratio = static_cast<double>(lu_duration.count()) / cholesky_duration.count();
-        double cholesky_cholesky_ratio = static_cast<double>(cholesky_duration.count()) / cholesky_duration.count();
+        double qr_cholesky_ratio = static_cast<int>(qr_duration.count()) / cholesky_duration.count();
+        double lu_cholesky_ratio = static_cast<int>(lu_duration.count()) / cholesky_duration.count();
+        double cholesky_cholesky_ratio = static_cast<int>(cholesky_duration.count()) / cholesky_duration.count();
 
         cout << "x----------------------------------------------------------------------------------x"
              << "\n";
 
-        // cout << "QR Decomposition Time / Cholesky Decomposition Time Ratio: " << qr_cholesky_ratio << endl;
-        // cout << "LU Decomposition Time / Cholesky Decomposition Time Ratio: " << lu_cholesky_ratio << endl;
-        // cout << "Cholesky Decomposition Time / Cholesky Decomposition Time Ratio: " << cholesky_cholesky_ratio << endl;
         cout << "QR : LU : Cholesky -> " << qr_cholesky_ratio << " : " << lu_cholesky_ratio << " : " << cholesky_cholesky_ratio << endl;
     }
 };
@@ -119,11 +112,10 @@ int main()
     cin >> matrixSize;
 
     MatrixDecomposer decomposer(matrixSize);
-    decomposer.displayMatrix(decomposer.getSymmetricMatrix(), "SPD Matrix");
 
     decomposer.decomposeAndMeasureTime();
 
-    cout<<"\n\n";
+    cout << "\n\n";
 
     return 0;
 }
